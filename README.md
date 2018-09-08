@@ -1,11 +1,11 @@
 # Price Notification System
 
 ## Time Allocation
-Research:  
-Learning:  
-Design:  
-Implementation:  
-Documentation:  
+1. Research:  2 hours - comparing between kinesis, athena and glue  
+2. Learning:  4 hours - learning, glue, athena, terraform/cloudformation
+3. Design: 1 hour  
+4. Implementation: 4 hours - stuck at athena, revert back to using lambda in data analysis module implementation  
+5. Documentation: 1 hour  
 
 ----
 ## AWS Architecture Design Diagram
@@ -40,8 +40,10 @@ Documentation:
 
 ----
 ## Improvements
-// improvements
+1. Ingest data into a relational database for future more complex analysis
+2. Use Athena instead of lambda to analyse price change percentage.
 
 ----
 ## Tradeoffs of Design
-// tradeoffs 
+#### Data Ingestion Module
+1. Use Glue to cater for different kind of data input (xml, json, text, etc) instead of Athena which can directly query from source data if the input format is standardise. 
