@@ -1,27 +1,37 @@
 import csv
 import boto3
-import os
 
 s3 = boto3.resource('s3')
+
+def get_lastest_2_price_data(file):
+    lastest_2_weightedAverage = [] # compute the latest price record only
+
+    with open('/tmp/file.csv', 'r') as f:
+        reader = csv.DictReader(f)
+        for row in list(reader)[-2:]:
+            lastest_2_weightedAverage.append(float(row['weightedAverage']))
+
+    return lastest_2_weightedAverage
+
+def compute_price_changed(weighted_average1, weighted_average2):
+    return abs(weighted_average1 - weighted_average2) / weighted_average1 * 100
 
 def lambda_handler(event, context):
     for record in event['Records']:
         bucket = record['s3']['bucket']['name']
         key = record['s3']['object']['key']
         
-        downloadPath = '/tmp/file.csv'
+        download_path = '/tmp/file.csv'
+        alert_threshold = 0.5
 
-        # download object from source bucket and store it in /tmp/
-        s3.meta.client.download_file(bucket, key, downloadPath)
-        last_2_weightedAverage = []
-        with open("/tmp/file.csv", "r") as f:
-            reader = csv.DictReader(f)
-            for row in list(reader)[-2:]:
-                last_2_weightedAverage.append(row['weightedAverage'])
+        # download csv from [Bucket]/crypto/02-data-analysis/USDT_ETH.csv to /tmp/ in lambda
+        s3.meta.client.download_file(bucket, key, download_path)
+
+        weighted_average_array = get_lastest_2_price_data(download_path)
+
+        percentage_changed = compute_price_changed(weighted_average_array[1], weighted_average_array[0])
         
-        percentage_changed = abs(float(last_2_weightedAverage[1]) - float(last_2_weightedAverage[0])) / float(last_2_weightedAverage[1]) * 100
-        
-        if percentage_changed > 0.5:
+        if percentage_changed > alert_threshold:
             continue
             # publish to sns notification
         
