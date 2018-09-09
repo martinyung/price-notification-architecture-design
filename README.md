@@ -42,6 +42,8 @@
 ## Improvements
 1. Ingest data into a relational database for future more complex analysis
 2. Use Athena instead of lambda to analyse price change percentage.
+3. Use S3 Lifecycle to remove old data files in sub folder `/crypto/01-data-ingestion` which are already ingested to datastore.
+4. Glue output as parquet and use month to partition for complex and large data set analysis using Athena.
 
 ----
 ## Tradeoffs of Design

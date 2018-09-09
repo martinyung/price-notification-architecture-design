@@ -1,0 +1,11 @@
+
+# IDE
+/.idea
+/.awcache
+/.vscode
+
+# misc
+.DS_Store
+
+# terraform
+/terraform/.terraform
